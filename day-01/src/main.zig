@@ -2,6 +2,11 @@ const std = @import("std");
 const print = std.debug.print;
 const startsWith = std.mem.startsWith;
 
+fn matchNumber(s: []const u8, n: []const u8, d: u8) ?u8 {
+    if (startsWith(u8, s, n)) return d;
+    return null;
+}
+
 fn extractCalibrationValue(line: []u8) u8 {
     var digits = [2]u8{ 0, 0 };
     var first = true;
@@ -11,73 +16,25 @@ fn extractCalibrationValue(line: []u8) u8 {
 
     while (i < line.len) : (i += 1) {
         const c = line[i];
-        var digit: u8 = 0;
+        const rest = line[i..];
 
-        switch (c) {
-            'o' => {
-                // one
-                if (startsWith(u8, line[i..], "one")) {
-                    // i += "one".len - 1;
-                    digit = 1;
-                } else continue;
-            },
-            't' => {
-                // two, three
-                if (startsWith(u8, line[i..], "two")) {
-                    // i += "two".len - 1;
-                    digit = 2;
-                } else if (startsWith(u8, line[i..], "three")) {
-                    // i += "three".len - 1;
-                    digit = 3;
-                } else continue;
-            },
-            'f' => {
-                // four, five
-                if (startsWith(u8, line[i..], "four")) {
-                    // i += "four".len - 1;
-                    digit = 4;
-                } else if (startsWith(u8, line[i..], "five")) {
-                    // i += "three".len - 1;
-                    digit = 5;
-                } else continue;
-            },
-            's' => {
-                // six, seven
-                if (startsWith(u8, line[i..], "six")) {
-                    // i += "six".len - 1;
-                    digit = 6;
-                } else if (startsWith(u8, line[i..], "seven")) {
-                    // i += "seven".len - 1;
-                    digit = 7;
-                } else continue;
-            },
-            'e' => {
-                // eight
-                if (startsWith(u8, line[i..], "eight")) {
-                    // i += "eight".len - 1;
-                    digit = 8;
-                } else continue;
-            },
-            'n' => {
-                // nine
-                if (startsWith(u8, line[i..], "nine")) {
-                    // i += "nine".len - 1;
-                    digit = 9;
-                } else continue;
-            },
-            '0'...'9' => {
-                digit = c - '0';
-            },
-            else => continue,
+        if (switch (c) {
+            'o' => matchNumber(rest, "one", 1),
+            't' => matchNumber(rest, "two", 2) orelse matchNumber(rest, "three", 3),
+            'f' => matchNumber(rest, "four", 4) orelse matchNumber(rest, "five", 5),
+            's' => matchNumber(rest, "six", 6) orelse matchNumber(rest, "seven", 7),
+            'e' => matchNumber(rest, "eight", 8),
+            'n' => matchNumber(rest, "nine", 9),
+            '0'...'9' => c - '0',
+            else => null,
+        }) |digit| {
+            // print("digit = {d}\n", .{digit});
+            if (first) {
+                digits[0] = digit;
+                first = false;
+            }
+            digits[1] = digit;
         }
-
-        // print("digit = {d}\n", .{digit});
-
-        if (first) {
-            digits[0] = digit;
-            first = false;
-        }
-        digits[1] = digit;
     }
 
     // print("{} {}\n", .{ digits[0], digits[1] });
