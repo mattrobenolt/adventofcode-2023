@@ -1,10 +1,6 @@
 const std = @import("std");
 const print = std.debug.print;
-
-fn startsWith(haystack: []u8, needle: []const u8) bool {
-    return (needle.len <= haystack.len and
-        std.mem.eql(u8, needle, haystack[0..needle.len]));
-}
+const startsWith = std.mem.startsWith;
 
 fn extractCalibrationValue(line: []u8) u8 {
     var digits = [2]u8{ 0, 0 };
@@ -20,51 +16,51 @@ fn extractCalibrationValue(line: []u8) u8 {
         switch (c) {
             'o' => {
                 // one
-                if (startsWith(line[i..], "one")) {
+                if (startsWith(u8, line[i..], "one")) {
                     // i += "one".len - 1;
                     digit = 1;
                 } else continue;
             },
             't' => {
                 // two, three
-                if (startsWith(line[i..], "two")) {
+                if (startsWith(u8, line[i..], "two")) {
                     // i += "two".len - 1;
                     digit = 2;
-                } else if (startsWith(line[i..], "three")) {
+                } else if (startsWith(u8, line[i..], "three")) {
                     // i += "three".len - 1;
                     digit = 3;
                 } else continue;
             },
             'f' => {
                 // four, five
-                if (startsWith(line[i..], "four")) {
+                if (startsWith(u8, line[i..], "four")) {
                     // i += "four".len - 1;
                     digit = 4;
-                } else if (startsWith(line[i..], "five")) {
+                } else if (startsWith(u8, line[i..], "five")) {
                     // i += "three".len - 1;
                     digit = 5;
                 } else continue;
             },
             's' => {
                 // six, seven
-                if (startsWith(line[i..], "six")) {
+                if (startsWith(u8, line[i..], "six")) {
                     // i += "six".len - 1;
                     digit = 6;
-                } else if (startsWith(line[i..], "seven")) {
+                } else if (startsWith(u8, line[i..], "seven")) {
                     // i += "seven".len - 1;
                     digit = 7;
                 } else continue;
             },
             'e' => {
                 // eight
-                if (startsWith(line[i..], "eight")) {
+                if (startsWith(u8, line[i..], "eight")) {
                     // i += "eight".len - 1;
                     digit = 8;
                 } else continue;
             },
             'n' => {
                 // nine
-                if (startsWith(line[i..], "nine")) {
+                if (startsWith(u8, line[i..], "nine")) {
                     // i += "nine".len - 1;
                     digit = 9;
                 } else continue;
